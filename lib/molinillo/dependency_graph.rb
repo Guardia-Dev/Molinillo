@@ -183,6 +183,28 @@ module Molinillo
       vertex if vertex && vertex.root?
     end
 
+    def path(from, to)
+      distances = Hash.new(vertices.size + 1)
+      distances[from.name] = 0
+      predecessors = {}
+      each do |vertex|
+        vertex.successors.each do |successor|
+          if distances[successor.name] > distances[vertex.name] + 1
+            distances[successor.name] = distances[vertex.name] + 1
+            predecessors[successor] = vertex
+          end
+        end
+      end
+
+      path = [to]
+      while before = predecessors[to]
+        path << before
+        to = before
+        break if to == from
+      end
+      path
+    end
+
     # Adds a new {Edge} to the dependency graph
     # @param [Vertex] origin
     # @param [Vertex] destination
@@ -190,7 +212,7 @@ module Molinillo
     # @return [Edge] the added edge
     def add_edge(origin, destination, requirement)
       if destination.path_to?(origin)
-        raise CircularDependencyError.new([origin, destination])
+        raise CircularDependencyError.new(path(destination, origin).reverse)
       end
       add_edge_no_circular(origin, destination, requirement)
     end
