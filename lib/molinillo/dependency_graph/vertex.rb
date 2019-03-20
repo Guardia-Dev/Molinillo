@@ -2,24 +2,22 @@
 
 module Molinillo
   class DependencyGraph
-    # A vertex in a {DependencyGraph} that encapsulates a {#name} and a
-    # {#payload}
+    # {DependencyGraph} 中的一个顶点封装了一个 {#name} 和一个 {#payload}
     class Vertex
-      # @return [String] the name of the vertex
+      # @return [String] 顶点名
       attr_accessor :name
 
-      # @return [Object] the payload the vertex holds
+      # @return [Object] 每个顶点的加权
       attr_accessor :payload
 
-      # @return [Array<Object>] the explicit requirements that required
-      #   this vertex
+      # @return [Array<Object>] 每个顶点的约束条件
       attr_reader :explicit_requirements
 
-      # @return [Boolean] whether the vertex is considered a root vertex
+      # @return [Boolean] 是否为 root 顶点
       attr_accessor :root
       alias root? root
 
-      # Initializes a vertex with the given name and payload.
+      # 实例化一个节点
       # @param [String] name see {#name}
       # @param [Object] payload see {#payload}
       def initialize(name, payload)
@@ -28,6 +26,12 @@ module Molinillo
         @explicit_requirements = []
         @outgoing_edges = []
         @incoming_edges = []
+        # puts caller
+        # puts("顶点 vertex - #{@name}")
+        # puts("\t 权值 #{@payload}")
+        # puts("\t 约束条件 #{@explicit_requirements}")
+        # puts("\t 去边集合 #{@outgoing_edges}")
+        # puts("\t 来边集合 #{@incoming_edges}")
       end
 
       # @return [Array<Object>] all of the requirements that required
@@ -38,10 +42,12 @@ module Molinillo
 
       # @return [Array<Edge>] the edges of {#graph} that have `self` as their
       #   {Edge#origin}
+      # 去边
       attr_accessor :outgoing_edges
 
       # @return [Array<Edge>] the edges of {#graph} that have `self` as their
       #   {Edge#destination}
+      # 来边
       attr_accessor :incoming_edges
 
       # @return [Array<Vertex>] the vertices of {#graph} that have an edge with

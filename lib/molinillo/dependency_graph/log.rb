@@ -28,17 +28,31 @@ module Molinillo
       end
 
       # @macro action
+      # 增加顶点
       def add_vertex(graph, name, payload, root)
+        puts("加点 #{name} #{root ? "根节点" : "非根节点"}")
+        # puts(graph.vertices)
+        if graph.vertices.include? "AlamofireObjectMapper"
+          puts("explicit_requirements", graph.vertices["AlamofireObjectMapper"].explicit_requirements)
+          puts("outgoing_edges", graph.vertices["AlamofireObjectMapper"].outgoing_edges)
+          puts("incoming_edges", graph.vertices["AlamofireObjectMapper"].incoming_edges)
+          puts("payload", graph.vertices["AlamofireObjectMapper"].payload)
+        end
         push_action(graph, AddVertex.new(name, payload, root))
       end
 
       # @macro action
+      # 拆点
       def detach_vertex_named(graph, name)
+        puts("拆点 #{name}")
         push_action(graph, DetachVertexNamed.new(name))
       end
 
       # @macro action
+      # 加边
       def add_edge_no_circular(graph, origin, destination, requirement)
+        puts("加边 #{origin} => #{destination}")
+        puts("\t requirement #{requirement}")
         push_action(graph, AddEdgeNoCircular.new(origin, destination, requirement))
       end
 
@@ -48,16 +62,19 @@ module Molinillo
       # @param [String] destination_name
       # @param [Object] requirement
       # @return (see DependencyGraph#delete_edge)
+      # 删边
       def delete_edge(graph, origin_name, destination_name, requirement)
+        puts("删边 #{origin_name} => #{destination_name}")
         push_action(graph, DeleteEdge.new(origin_name, destination_name, requirement))
       end
 
       # @macro action
       def set_payload(graph, name, payload)
+        puts("设置 payload ---> #{name}, #{payload.to_s}")
         push_action(graph, SetPayload.new(name, payload))
       end
 
-      # Pops the most recent action from the log and undoes the action
+      # 从 log 中 pop 最近的一次操作并撤销
       # @param [DependencyGraph] graph
       # @return [Action] the action that was popped off the log
       def pop!(graph)
@@ -65,6 +82,7 @@ module Molinillo
         unless @current_action = action.previous
           @first_action = nil
         end
+        puts "撤销一次操作"
         action.down(graph)
         action
       end

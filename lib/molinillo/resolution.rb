@@ -165,6 +165,7 @@ module Molinillo
       # @return [DependencyGraph] the dependency graph of successfully resolved
       #   dependencies
       def resolve
+        puts("original_requested #{@original_requested}")
         start_resolution
 
         while state
@@ -207,6 +208,7 @@ module Molinillo
       def start_resolution
         @started_at = Time.now
 
+        puts(">>> initial_state #{initial_state.requirements}")
         handle_missing_or_push_dependency_state(initial_state)
 
         debug { "Starting resolution (#{@started_at})\nUser-requested dependencies: #{original_requested}" }
@@ -214,6 +216,7 @@ module Molinillo
       end
 
       def resolve_activated_specs
+        puts(">>> vertices: #{activated.vertices}")
         activated.vertices.each do |_, vertex|
           next unless vertex.payload
 

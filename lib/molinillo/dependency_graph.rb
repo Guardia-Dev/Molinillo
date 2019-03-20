@@ -46,7 +46,7 @@ module Molinillo
     Edge = Struct.new(:origin, :destination, :requirement)
 
     # @return [{String => Vertex}] the vertices of the dependency graph, keyed
-    #   by {Vertex#name}
+    #   by {Vertex#name}  
     attr_reader :vertices
 
     # @return [Log] the op log for this graph
@@ -145,6 +145,11 @@ module Molinillo
     # @return [void]
     def add_child_vertex(name, payload, parent_names, requirement)
       root = !parent_names.delete(nil) { true }
+      # puts(">>> add_child_vertex name #{name}")
+      # puts("\t>>> add_child_vertex payload #{payload}")
+      # puts("\t>>> add_child_vertex parent_names #{parent_names}")
+      # puts("\t>>> add_child_vertex requirement #{requirement}")
+      # puts("\t>>> add_child_vertex root #{root}")
       vertex = add_vertex(name, payload, root)
       vertex.explicit_requirements << requirement if root
       parent_names.each do |parent_name|
@@ -154,7 +159,7 @@ module Molinillo
       vertex
     end
 
-    # Adds a vertex with the given name, or updates the existing one.
+    # 增加顶点
     # @param [String] name
     # @param [Object] payload
     # @return [Vertex] the vertex that was added to `self`
@@ -162,8 +167,7 @@ module Molinillo
       log.add_vertex(self, name, payload, root)
     end
 
-    # Detaches the {#vertex_named} `name` {Vertex} from the graph, recursively
-    # removing any non-root vertices that were orphaned in the process
+    # 从图中分离 {Vertex}，递归删除直接相连的非根节点
     # @param [String] name
     # @return [Array<Vertex>] the vertices which have been detached
     def detach_vertex_named(name)
@@ -183,7 +187,7 @@ module Molinillo
       vertex if vertex && vertex.root?
     end
 
-    # Adds a new {Edge} to the dependency graph
+    # {Edge} 依赖图加边
     # @param [Vertex] origin
     # @param [Vertex] destination
     # @param [Object] requirement the requirement that this edge represents
@@ -212,8 +216,7 @@ module Molinillo
 
     private
 
-    # Adds a new {Edge} to the dependency graph without checking for
-    # circularity.
+    # 不检测环 加边
     # @param (see #add_edge)
     # @return (see #add_edge)
     def add_edge_no_circular(origin, destination, requirement)
